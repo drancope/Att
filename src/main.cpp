@@ -5,9 +5,9 @@ int timer_counter = 2;
 int estado = 0;
 ISR(WDT_vect) {
 // Toggle Port B pin 3 output state
- PORTB = 1<<PB3;
- delay(1);
- PORTB ^= 1<<PB3;
+ PORTB = 1<<PB4;
+ delay(10);
+ PORTB ^= 1<<PB4;
  if (timer_counter == 0) {
   if (estado) {
     PORTB |= 1<<PB2;
@@ -30,11 +30,11 @@ DDRB = 1<<DDB3;
 DDRB |= 1<<DDB2;
 
 //set timer to 1 sec
-//WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
+WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
 // set timer to 0.5s
 // WDTCR |= (1<<WDP2) | (1<<WDP0);
 // set timer to 4 sec
- WDTCR |= (1<<WDP3);
+// WDTCR |= (1<<WDP3);
 
 // Set watchdog timer in interrupt mode
 WDTCR |= (1<<WDTIE);
