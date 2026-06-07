@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../../../PlatformIO/Projects/prueba_rp2040_vscode"
+		},
+		{
+			"name": "Ataud_Halloween_servo-ldr",
+			"path": "../../../../Documentos/Programacion/GitHub/Ataud_Halloween_servo-ldr"
+		},
+		{
+			"name": "Att",
+			"path": "."
+		},
+		{
+			"path": "../Blink-normal"
+		}
+	],
+	"settings": {}
+}
