@@ -13,10 +13,10 @@ ISR(WDT_vect) {
  delay(10);
  int a=0;
  a = analogRead(PB3);
- if (a>630) {
+ if (a>500) {
   blink(20, 3);
  }
- else if (a<450) {
+ else if (a<250) {
   blink(30, 1);
  }
  if (timer_counter == 0) {
