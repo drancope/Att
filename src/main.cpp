@@ -1,39 +1,57 @@
 #include <Arduino.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
-int timer_counter = 2;
+#define APAGADO 0
+#define ENCENDIDO 1
+#define DEBUG
+
+int timer_counter = 4;
 int estado = 0;
+int hora = 0;
+
 void blink(int time, int repeat);
+
 ISR(WDT_vect) {
-// Toggle Port B pin 3 output state
- PORTB |= 1<<PB4;
- delay(10);
- PORTB ^= 1<<PB4;
- PORTB |= 1<<PB1;
- delay(10);
- int a=0;
- a = analogRead(PB3);
- if (a>500) {
-  blink(20, 3);
- }
- else if (a<250) {
-  blink(30, 1);
- }
- if (timer_counter == 0) {
-  if (estado) {
-    PORTB |= 1<<PB2;
-    timer_counter = 1;
+  // Encender y apagar led de inicio de ciclo
+  PORTB |= 1<<PB4;
+  delay(5);
+  PORTB ^= 1<<PB4;
+
+  if (timer_counter == 0) {
+    // Leer humedad
+    PORTB |= 1<<PB1;
+    delay(5);
+    int a=0;
+    int humedad = analogRead(PB3);
+    PORTB ^= 1<<PB1;
+#ifdef DEBUG
+    if (a>500) {
+      blink(20, 3);
+    }
+    else if (a<250) {
+      blink(30, 1);
+    }
+#endif
+
+  if (estado == ENCENDIDO) {
+    if (hora > 2) {
+      PORTB &= (0<<PB2);
+      hora = 0;
+      estado = APAGADO;
+    }
   } else {
-    PORTB &= (0<<PB2);
-    timer_counter = 2;
+    if (humedad >500) { // seco es mayor que 500
+      if (hora >2) {
+        PORTB |= (1<<PB2);
+        estado = ENCENDIDO;
+        hora = 0;
+      }
+    }
+    hora++;
   }
-  estado = !estado;
  } else {
   timer_counter--;
  }
- delay(10);
- PORTB ^= 1<<PB1;
- delay(10);
 }
 
 void setup(){
