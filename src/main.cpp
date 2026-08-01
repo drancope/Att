@@ -72,13 +72,13 @@ DDRB |= 1<<SENSOR_PWR; //
 
 PORTB &= ~(1<<SENSOR_PWR);
 //set timer to 1 sec
-//WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
+WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
 // set timer to 0.5s
 // WDTCR |= (1<<WDP2) | (1<<WDP0);
 // set timer to 4 sec
 // WDTCR |= (1<<WDP3);
 // set timer to 8 sec
-WDTCR |= (1<<WDP3) | (1<<WDP0);
+// WDTCR |= (1<<WDP3) | (1<<WDP0);
 
 
 // Set watchdog timer in interrupt mode
