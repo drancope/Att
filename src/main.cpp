@@ -18,7 +18,8 @@ void blink(int time, int repeat);
 
 ISR(WDT_vect) {
   // Encender y apagar led de inicio de ciclo
-PORTB &= ~(1<<SENSOR_PWR);
+PORTB |= 1<<SENSOR_PWR;
+  //PORTB &= ~(1<<SENSOR_PWR);
 #ifndef DEBUG
   PORTB |= 1<<LED;
   delay(5);
@@ -30,7 +31,7 @@ PORTB &= ~(1<<SENSOR_PWR);
     PORTB |= 1<<SENSOR_PWR;  // Encender alimentación del sensor
     delay(5);
     int16_t humedad = analogRead((analog_pin_t)SENSOR);
-    PORTB &= ~(1<<SENSOR_PWR);
+//    PORTB &= ~(1<<SENSOR_PWR);
 #ifdef DEBUG
     if (humedad>500) {
       blink(20, 3);
