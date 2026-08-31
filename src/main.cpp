@@ -3,63 +3,26 @@
 #include <avr/sleep.h>
 #define APAGADO 0
 #define ENCENDIDO 1
-//2#define DEBUG
+//#define DEBUG
 
-#define LED PB4
-#define SENSOR_PWR PB1
-#define SENSOR PB3
-#define MOTOR PB2
+#define LED PB4 //pin 3
+#define SENSOR_PWR PB1 //pin 6
+#define SENSOR PB3 //pin 2
+#define MOTOR PB2 //pin 7
 
-int timer_counter = 4;
-int estado = 0;
-int hora = 0;
+int estado = 1;
 
 void blink(int time, int repeat);
 
 ISR(WDT_vect) {
-  // Encender y apagar led de inicio de ciclo
-PORTB |= 1<<SENSOR_PWR;
-  //PORTB &= ~(1<<SENSOR_PWR);
-#ifndef DEBUG
-  PORTB |= 1<<LED;
-  delay(5);
-  PORTB ^= 1<<LED;
-#endif
 
-  if (timer_counter == 0) {
-    // Leer humedad
-    PORTB |= 1<<SENSOR_PWR;  // Encender alimentación del sensor
-    delay(5);
-    int16_t humedad = analogRead((analog_pin_t)SENSOR);
-//    PORTB &= ~(1<<SENSOR_PWR);
-#ifdef DEBUG
-    if (humedad>500) {
-      blink(20, 3);
-    }
-    else if (humedad<250) {
-      blink(30, 1);
-    }
-#endif
-
-  if (estado == ENCENDIDO) {
-    if (hora > 2) {
-      PORTB &= (0<<MOTOR);
-      hora = 0;
-      estado = APAGADO;
-    }
-  } else {
-    if (humedad >500) { // seco es mayor que 500
-      if (hora >2) {
-        PORTB |= (1<<MOTOR);
-        estado = ENCENDIDO;
-        hora = 0;
-      }
-    }
-    hora++;
-  }
- } else {
-  timer_counter--;
- }
+  // Encender o apagar las tres salidas (led, 7 y 6)
+if (estado) {
+  PORTB |= (1<<SENSOR_PWR) | (1<<LED) | (1<<MOTOR);
+} else {
+  PORTB = 0;
+}
+ estado = !estado;
 }
 
 void setup(){
@@ -70,13 +33,13 @@ DDRB = 1<<LED;
 DDRB |= 1<<MOTOR;
 DDRB |= 1<<SENSOR_PWR; // 
 
-PORTB &= ~(1<<SENSOR_PWR);
+PORTB |= (1<<SENSOR_PWR);
 //set timer to 1 sec
-WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
+// WDTCR |= (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0);
 // set timer to 0.5s
 // WDTCR |= (1<<WDP2) | (1<<WDP0);
 // set timer to 4 sec
-// WDTCR |= (1<<WDP3);
+WDTCR |= (1<<WDP3);
 // set timer to 8 sec
 // WDTCR |= (1<<WDP3) | (1<<WDP0);
 
@@ -91,13 +54,4 @@ set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 
 void loop() {
  sleep_mode();   // go to sleep and wait for interrupt...
-}
-
-void blink(int time, int repeat) {
-  for(int i = repeat; i>0; i--) {
-    PORTB |= 1<<LED;
-    delay(time);
-    PORTB ^= 1<<LED;
-    delay(time);
-  }
 }
